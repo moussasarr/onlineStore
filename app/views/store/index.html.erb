@@ -1,2 +1,23 @@
-<h1>Store#index</h1>
-<p>Find me in app/views/store/index.html.erb</p>
+<% if notice %>
+<p id="notice"><%= notice %></p>
+<% end %>
+<h1><%= t('.title_html') %></h1>
+<% if @counter > 5 %>
+<p> You have accessed this page <%= pluralize( @counter, 'time') %> </p> 
+<% end %>
+<% cache ['store', Product.latest] do %>
+<% @products.each do |product| %>
+<% cache ['entry', product] do %>
+<div class="entry">
+<%= link_to image_tag(product.image_url), line_items_path(product_id: product), method: :create %>
+<h3><%= product.title %></h3>
+<%= sanitize(product.description) %>
+<div class="price_line">
+<span class="price"><%= number_to_currency(product.price) %></span>
+<%= button_to t('.add_html'), line_items_path(product_id: product),
+remote: true %>
+</div>
+</div>
+<% end %>
+<% end %>
+<% end %>
